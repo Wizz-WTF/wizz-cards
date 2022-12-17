@@ -75,7 +75,8 @@ contract WizzmasTest is Test {
             address(artwork),
             supportedTokens,
             1,
-            cardBaseURI
+            cardBaseURI,
+            msg.sender
         );
     }
 

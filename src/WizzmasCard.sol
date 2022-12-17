@@ -49,8 +49,9 @@ contract WizzmasCard is ERC721, Owned, ReentrancyGuard {
         address _artworkAddress,
         address[] memory _tokenContracts,
         uint8 _numTemplates,
-        string memory _initialBaseURI
-    ) ERC721("WizzmasCard", "WizzmasCard") Owned(msg.sender) {
+        string memory _initialBaseURI,
+        address _owner
+    ) ERC721("WizzmasCard", "WizzmasCard") Owned(_owner) {
         artworkAddress = _artworkAddress;
         for(uint8 i = 0; i < _tokenContracts.length; i++) {
             supportedTokenContracts[_tokenContracts[i]] = true;

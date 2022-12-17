@@ -9,11 +9,14 @@ import "../../src/WizzmasCard.sol";
 
 contract WizzmasScript is Script {
     function run() external {
-        vm.startBroadcast();
+
+        address owner = vm.envAddress("OWNER_ADDRESS");
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        vm.startBroadcast(deployerPrivateKey);
 
         // Artworks
         uint256 numArtworkTypes = 1;
-        WizzmasArtwork artwork = new WizzmasArtwork(msg.sender);
+        WizzmasArtwork artwork = new WizzmasArtwork(owner);
         for (uint i = 0; i < numArtworkTypes; i++) {
             artwork.setTokenURI(
                 i,
@@ -28,10 +31,9 @@ contract WizzmasScript is Script {
         WizzmasArtworkMinter artworkMinter = new WizzmasArtworkMinter(
             address(artwork),
             numArtworkTypes,
-            msg.sender
+            owner
         );
         artwork.addMinter(address(artworkMinter));
-        artworkMinter.setMintEnabled(true);
 
         // Cards
         uint8 numTemplateTypes = 2;
@@ -39,17 +41,14 @@ contract WizzmasScript is Script {
         supportedTokens[0] = vm.envAddress("CONTRACT_ADDRESS_WIZARDS");
         supportedTokens[1] = vm.envAddress("CONTRACT_ADDRESS_SOULS");
         supportedTokens[2] = vm.envAddress("CONTRACT_ADDRESS_WARRIORS");
-        supportedTokens[3] = vm.envAddress("CONTRACT_ADDRESS_PONIES");
-        supportedTokens[4] = vm.envAddress("CONTRACT_ADDRESS_BEASTS");
-        supportedTokens[5] = vm.envAddress("CONTRACT_ADDRESS_SPAWN");
 
         WizzmasCard card = new WizzmasCard(
             address(artwork),
             supportedTokens,
             numTemplateTypes,
-            vm.envString("BASE_URI_CARDS")
+            vm.envString("BASE_URI_CARDS"),
+            owner
         );
-        card.setMintEnabled(true);
 
         vm.stopBroadcast();
     }

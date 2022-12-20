@@ -10,13 +10,14 @@ import "../../src/WizzmasCard.sol";
 contract WizzmasScript is Script {
     function run() external {
 
+        address deployer = vm.envAddress("DEPLOYER_ADDRESS");
         address owner = vm.envAddress("OWNER_ADDRESS");
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
         // Artworks
         uint256 numArtworkTypes = 1;
-        WizzWTF artwork = new WizzWTF(owner);
+        WizzWTF artwork = new WizzWTF(deployer);
         for (uint i = 0; i < numArtworkTypes; i++) {
             artwork.setTokenURI(
                 i,
@@ -31,7 +32,7 @@ contract WizzmasScript is Script {
         WizzWTFMinter artworkMinter = new WizzWTFMinter(
             address(artwork),
             numArtworkTypes,
-            owner
+            deployer
         );
         artwork.addMinter(address(artworkMinter));
 
@@ -47,8 +48,13 @@ contract WizzmasScript is Script {
             supportedTokens,
             numTemplateTypes,
             vm.envString("BASE_URI_CARDS"),
-            owner
+            deployer
         );
+
+        // transfer ownership
+        artwork.transferOwnership(owner);
+        artworkMinter.transferOwnership(owner);
+        card.transferOwnership(owner);
 
         vm.stopBroadcast();
     }

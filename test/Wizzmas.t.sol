@@ -90,6 +90,16 @@ contract WizzmasTest is Test {
         assertEq(artwork.tokenURIs(2), string.concat(artworkBaseURI, "2"));
     }
 
+    function testTransferOwnership() public {
+        artwork.transferOwnership(jro);
+        artworkMinter.transferOwnership(jro);
+        card.transferOwnership(jro);
+
+        assertEq(artwork.owner(), jro);
+        assertEq(artworkMinter.owner(), jro);
+        assertEq(card.owner(), jro);
+    }
+
     function testMintArtworks() public {
         artworkMinter.setMintEnabled(true);
         uint256 price = artworkMinter.mintPrice();

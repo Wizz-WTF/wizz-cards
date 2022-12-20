@@ -17,6 +17,8 @@ contract WizzWTF is ERC1155, Owned {
     mapping(address => bool) public minters;
 
     error NotOwnerOrMinter();
+    error MissingToken();
+    error InvalidMintAmount();
 
     modifier onlyMinterOrOwner() {
         if (!minters[msg.sender] && msg.sender != owner) revert NotOwnerOrMinter();
@@ -26,7 +28,7 @@ contract WizzWTF is ERC1155, Owned {
     constructor(address _owner) Owned(_owner) {}
 
     function uri(uint256 id) public view override returns (string memory) {
-        require(bytes(tokenURIs[id]).length > 0, "MISSING_TOKEN");
+        if (bytes(tokenURIs[id]).length <= 0) revert MissingToken();
         return tokenURIs[id];
     }
 
@@ -40,7 +42,7 @@ contract WizzWTF is ERC1155, Owned {
         uint256 amount,
         bytes calldata data
     ) public onlyMinterOrOwner {
-        require(amount > 0, "INVALID_AMOUNT");
+        if (amount <= 0) revert InvalidMintAmount();
         tokenSupply[tokenId] = tokenSupply[tokenId] + amount;
         _mint(initialOwner, tokenId, amount, data);
     }

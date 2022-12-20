@@ -42,6 +42,7 @@ contract WizzmasCard is ERC721, Owned, ReentrancyGuard {
     error InvalidMessageLength();
     error NotOwnerOfToken();
     error NoCover();
+    error CardNotMinted();
 
     event WizzmasCardMinted(Card data);
 
@@ -100,7 +101,7 @@ contract WizzmasCard is ERC721, Owned, ReentrancyGuard {
         if (nextTokenId > cardId) {
             return cards[cardId];
         }
-        revert("CARD_NOT_MINTED");
+        revert CardNotMinted();
     }
 
     function tokenURI(uint256 id) public view virtual override returns (string memory) {
@@ -119,6 +120,10 @@ contract WizzmasCard is ERC721, Owned, ReentrancyGuard {
         return baseURI;
     }
 
+    function totalSupply() public view returns (uint24) {
+        return nextTokenId;
+    }
+
     // Only contract owner shall pass
     function withdraw() public onlyOwner {
         payable(msg.sender).transfer(address(this).balance);
@@ -128,12 +133,9 @@ contract WizzmasCard is ERC721, Owned, ReentrancyGuard {
         numTemplates = _numTemplates;
     }
 
-    function totalSupply() public view returns (uint24) {
-        return nextTokenId;
-    }
-
     function strikeMessage(uint24 cardId, string memory _message) public onlyOwner {
-        require(cardId < nextTokenId, "Card not minted yet");
+        if(cardId >= nextTokenId) revert CardNotMinted();
+        if(bytes(_message).length >= 64 || bytes(_message).length < 1) revert InvalidMessageLength();
         cards[cardId].message = _message;
     }
 

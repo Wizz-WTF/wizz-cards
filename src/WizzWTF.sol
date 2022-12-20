@@ -19,10 +19,6 @@ contract WizzWTF is ERC1155, Owned {
     error NotOwnerOrMinter();
 
     modifier onlyMinterOrOwner() {
-        require(
-            minters[msg.sender] || msg.sender == owner,
-            "only minter or owner can call this function"
-        );
         if (!minters[msg.sender] && msg.sender != owner) revert NotOwnerOrMinter();
         _;
     }

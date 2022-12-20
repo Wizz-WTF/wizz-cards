@@ -122,6 +122,12 @@ contract WizzmasTest is Test {
         artworkMinter.claim(3);
     }
 
+    function testMintArworkNotOwnerOrMinter() public {
+        vm.prank(spz);
+        vm.expectRevert();
+        artwork.mint(spz, 0, 1, "");
+    }
+
     function testMintCard() public {
         artworkMinter.setMintEnabled(true);
         card.setMintEnabled(true);
@@ -167,7 +173,7 @@ contract WizzmasTest is Test {
         card.mint(address(wizards), 0, 0, 0, validMessage, jro);
         vm.stopPrank();
         
-        vm.expectRevert(bytes('Card not minted yet'));
+        vm.expectRevert();
         card.strikeMessage(1, 'Sender has a dirty kobold mouth xD');
     }
 
@@ -186,12 +192,10 @@ contract WizzmasTest is Test {
 
         assertEq(card.getSenderCardIds(spz).length, 1);
         assertEq(card.getRecipientCardIds(jro).length, 1);
-
-
     }
 
     function testGetInvalidCard() public {
-        vm.expectRevert(bytes("CARD_NOT_MINTED"));
+        vm.expectRevert();
         card.getCard(0);
     }
 

@@ -21,7 +21,7 @@ interface ArtworkContract {
 }
 
 contract WizzWTFMinter is Owned, ReentrancyGuard {
-    address public wizzmasArtworkAddress;
+    address public wizzWTFAddress;
     uint256 public numArtworkTypes;
 
     bool public mintEnabled = false;
@@ -30,11 +30,11 @@ contract WizzWTFMinter is Owned, ReentrancyGuard {
     mapping(address => uint) public minted;
     mapping(uint256 => bool) public tokenFrozen;
 
-    event WizzmasArtworkMinted(address minter, uint256 artworkType);
-    event WizzmasArtworkClaimed(address claimer, uint256 artworkType);
+    event WizzWTFMinted(address minter, uint256 artworkType);
+    event WizzWTFClaimed(address claimer, uint256 artworkType);
 
     constructor(address _artworkAddress, uint256 _numArtworkTypes, address _owner) Owned(_owner) {
-        wizzmasArtworkAddress = _artworkAddress;
+        wizzWTFAddress = _artworkAddress;
         numArtworkTypes = _numArtworkTypes;
     }
 
@@ -46,28 +46,28 @@ contract WizzWTFMinter is Owned, ReentrancyGuard {
         require(mintEnabled, "MINT_CLOSED");
         require(!tokenFrozen[artworkType], "TOKEN_FROZEN");
         require(canClaim(msg.sender), "FREE_CLAIMS_USED");
-        ArtworkContract artwork = ArtworkContract(wizzmasArtworkAddress);
+        ArtworkContract artwork = ArtworkContract(wizzWTFAddress);
         require(artworkType < numArtworkTypes, "INCORRECT_ARTWORK_TYPE");
 
         artwork.mint(msg.sender, artworkType, 1, "");
 
         minted[msg.sender] += 1;
 
-        emit WizzmasArtworkClaimed(msg.sender, artworkType);
+        emit WizzWTFClaimed(msg.sender, artworkType);
     }
 
     function mint(uint256 artworkType) public payable nonReentrant {
         require(mintEnabled, "MINT_CLOSED");
         require(!tokenFrozen[artworkType], "TOKEN_FROZEN");
         require(msg.value == mintPrice, "INCORRECT_ETH_VALUE");
-        ArtworkContract artwork = ArtworkContract(wizzmasArtworkAddress);
+        ArtworkContract artwork = ArtworkContract(wizzWTFAddress);
         require(artworkType < numArtworkTypes, "INCORRECT_ARTWORK_TYPE");
 
         artwork.mint(msg.sender, artworkType, 1, "");
 
         minted[msg.sender] += 1;
 
-        emit WizzmasArtworkMinted(msg.sender, artworkType);
+        emit WizzWTFMinted(msg.sender, artworkType);
     }
 
     // Only contract owner shall pass

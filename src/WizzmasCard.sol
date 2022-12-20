@@ -51,7 +51,7 @@ contract WizzmasCard is ERC721, Owned, ReentrancyGuard {
         uint8 _numTemplates,
         string memory _initialBaseURI,
         address _owner
-    ) ERC721("WizzmasCard", "WizzmasCard") Owned(_owner) {
+    ) ERC721("Wizzmas Cards", "WIZZMAS") Owned(_owner) {
         artworkAddress = _artworkAddress;
         for(uint8 i = 0; i < _tokenContracts.length; i++) {
             supportedTokenContracts[_tokenContracts[i]] = true;
@@ -128,9 +128,13 @@ contract WizzmasCard is ERC721, Owned, ReentrancyGuard {
         numTemplates = _numTemplates;
     }
 
-    function strikeMessage(uint24 cardId) public onlyOwner {
+    function totalSupply() public view returns (uint24) {
+        return nextTokenId;
+    }
+
+    function strikeMessage(uint24 cardId, string memory _message) public onlyOwner {
         require(cardId < nextTokenId, "Card not minted yet");
-        cards[cardId].message = 'Sender has a dirty kobold mouth xD';
+        cards[cardId].message = _message;
     }
 
     function setBaseURI(string memory _newBaseURI) public onlyOwner {

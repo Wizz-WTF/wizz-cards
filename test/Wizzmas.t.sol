@@ -2,8 +2,8 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/WizzmasArtwork.sol";
-import "../src/WizzmasArtworkMinter.sol";
+import "../src/WizzWTF.sol";
+import "../src/WizzWTFMinter.sol";
 import "../src/WizzmasCard.sol";
 import "solmate/tokens/ERC721.sol";
 
@@ -32,8 +32,8 @@ contract WizzmasTest is Test {
     DummyERC721 public beasts;
     DummyERC721 public spawn;
 
-    WizzmasArtwork public artwork;
-    WizzmasArtworkMinter public artworkMinter;
+    WizzWTF public artwork;
+    WizzWTFMinter public artworkMinter;
     WizzmasCard public card;
 
     address owner;
@@ -57,11 +57,11 @@ contract WizzmasTest is Test {
         beasts = new DummyERC721();
         spawn = new DummyERC721();
 
-        artwork = new WizzmasArtwork(owner);
+        artwork = new WizzWTF(owner);
         artwork.setTokenURI(0, string.concat(artworkBaseURI, "0"));
         artwork.setTokenURI(1, string.concat(artworkBaseURI, "1"));
         artwork.setTokenURI(2, string.concat(artworkBaseURI, "2"));
-        artworkMinter = new WizzmasArtworkMinter(address(artwork), 3, owner);
+        artworkMinter = new WizzWTFMinter(address(artwork), 3, owner);
         artwork.addMinter(address(artworkMinter));
         address[] memory supportedTokens = new address[](6);
         supportedTokens[0] = address(wizards);
@@ -76,7 +76,7 @@ contract WizzmasTest is Test {
             supportedTokens,
             1,
             cardBaseURI,
-            msg.sender
+            owner
         );
     }
 
@@ -101,6 +101,18 @@ contract WizzmasTest is Test {
         vm.stopPrank();
 
         assertEq(artworkMinter.minted(spz), 3);
+    }
+
+    function testToggleFrozenTokenArtwork() public {
+        artworkMinter.setMintEnabled(true);
+        
+        assertEq(artworkMinter.tokenFrozen(0), false);
+
+        artworkMinter.setFreezeToken(0, true);
+
+        assertEq(artworkMinter.tokenFrozen(0), true);
+        vm.expectRevert(bytes('TOKEN_FROZEN'));
+        artworkMinter.claim(0);
     }
 
     function testMintInvalidArtwork() public {
@@ -140,7 +152,7 @@ contract WizzmasTest is Test {
         card.mint(address(wizards), 0, 0, 0, validMessage, jro);
         vm.stopPrank();
 
-        card.strikeMessage(0);
+        card.strikeMessage(0, 'Sender has a dirty kobold mouth xD');
         WizzmasCard.Card memory c = card.getCard(0);
         assertEq(c.message, 'Sender has a dirty kobold mouth xD');
     }
@@ -156,7 +168,7 @@ contract WizzmasTest is Test {
         vm.stopPrank();
         
         vm.expectRevert(bytes('Card not minted yet'));
-        card.strikeMessage(1);
+        card.strikeMessage(1, 'Sender has a dirty kobold mouth xD');
     }
 
     function testSenderCards() public {
@@ -202,6 +214,7 @@ contract WizzmasTest is Test {
         card.mint(address(beasts), 0, 0, 0, validMessage, jro);
         card.mint(address(spawn), 0, 0, 0, validMessage, jro);
         vm.stopPrank();
+        assertEq(card.totalSupply(), 6);
     }
 
     function testMintCardWithUnsupportedNFT() public {

@@ -8,22 +8,26 @@ pragma solidity ^0.8.0;
 import "solmate/tokens/ERC1155.sol";
 import "solmate/auth/Owned.sol";
 
-contract WizzmasArtwork is ERC1155, Owned {
+contract WizzWTF is ERC1155, Owned {
+    string public name = 'Wizz WTF';
+    string public symbol = 'WIZZ';
+
     mapping(uint256 => string) public tokenURIs;
     mapping(uint256 => uint256) public tokenSupply;
     mapping(address => bool) public minters;
+
+    error NotOwnerOrMinter();
 
     modifier onlyMinterOrOwner() {
         require(
             minters[msg.sender] || msg.sender == owner,
             "only minter or owner can call this function"
         );
+        if (!minters[msg.sender] && msg.sender != owner) revert NotOwnerOrMinter();
         _;
     }
 
-    constructor(address _owner) Owned(_owner) {
-
-    }
+    constructor(address _owner) Owned(_owner) {}
 
     function uri(uint256 id) public view override returns (string memory) {
         require(bytes(tokenURIs[id]).length > 0, "MISSING_TOKEN");

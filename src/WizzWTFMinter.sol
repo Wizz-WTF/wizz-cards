@@ -20,14 +20,13 @@ interface ArtworkContract {
     ) external;
 }
 
-contract WizzmasArtworkMinter is Owned, ReentrancyGuard {
+contract WizzWTFMinter is Owned, ReentrancyGuard {
     address public wizzmasArtworkAddress;
     uint256 public numArtworkTypes;
 
     bool public mintEnabled = false;
     uint256 public mintPrice = (1 ether * 0.01);
     uint256 public freeMintsPerAddress = 1;
-    uint256 public constant MAX_SUPPLY = 1000;
     mapping(address => uint) public minted;
     mapping(uint256 => bool) public tokenFrozen;
 
@@ -48,7 +47,6 @@ contract WizzmasArtworkMinter is Owned, ReentrancyGuard {
         require(!tokenFrozen[artworkType], "TOKEN_FROZEN");
         require(canClaim(msg.sender), "FREE_CLAIMS_USED");
         ArtworkContract artwork = ArtworkContract(wizzmasArtworkAddress);
-        require(artwork.tokenSupply(artworkType) + 1 <= MAX_SUPPLY, "SOLD_OUT");
         require(artworkType < numArtworkTypes, "INCORRECT_ARTWORK_TYPE");
 
         artwork.mint(msg.sender, artworkType, 1, "");
@@ -63,7 +61,6 @@ contract WizzmasArtworkMinter is Owned, ReentrancyGuard {
         require(!tokenFrozen[artworkType], "TOKEN_FROZEN");
         require(msg.value == mintPrice, "INCORRECT_ETH_VALUE");
         ArtworkContract artwork = ArtworkContract(wizzmasArtworkAddress);
-        require(artwork.tokenSupply(artworkType) + 1 <= MAX_SUPPLY, "SOLD_OUT");
         require(artworkType < numArtworkTypes, "INCORRECT_ARTWORK_TYPE");
 
         artwork.mint(msg.sender, artworkType, 1, "");
@@ -90,8 +87,8 @@ contract WizzmasArtworkMinter is Owned, ReentrancyGuard {
         freeMintsPerAddress = _numMints;
     }
 
-    function freezeToken(uint256 _tokenId) public onlyOwner {
-        tokenFrozen[_tokenId] = true;
+    function setFreezeToken(uint256 _tokenId, bool freeze) public onlyOwner {
+        tokenFrozen[_tokenId] = freeze;
     }
 
     function setNumArtworkTypes(uint256 _artworkTypeMax) public onlyOwner {

@@ -1,8 +1,15 @@
 //
-// WizzmasCardMinter
-//
-// SPDX-License-Identifier: MIT
-
+//                 __                                        _        ____ 
+//      _    _     LJ    _____     _____         _    _     FJ_      / ___J
+//     FJ .. L]         [__   F   [__   F       FJ .. L]   J  _|    J |_--'
+//    | |/  \| |   FJ   `-.'.'/   `-.'.'/      | |/  \| |  | |-'    |  _|  
+//    F   /\   J  J  L  .' (_(_   .' (_(_      F   /\   J  F |__-.  F |_J  
+//   J\__//\\__/L J__L J_______L J_______L    J\__//\\__/L \_____/ J__F    
+//    \__/  \__/  |__| |_______| |_______|     \__/  \__/  J_____F |__|    
+//     
+//                                                                  
+// Wizz WTF Minter
+// https://wizz.wtf
 pragma solidity ^0.8.9;
 
 import "solmate/tokens/ERC1155.sol";

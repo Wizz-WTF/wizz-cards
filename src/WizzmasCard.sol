@@ -1,8 +1,15 @@
 //
-// WizzmasCard
+//                 __                                                        
+//      _    _     LJ    _____     _____     _ _____       ___ _      ____   
+//     FJ .. L]         [__   F   [__   F   J '_  _ `,    F __` L    F ___J  
+//    | |/  \| |   FJ   `-.'.'/   `-.'.'/   | |_||_| |   | |--| |   | '----_ 
+//    F   /\   J  J  L  .' (_(_   .' (_(_   F L LJ J J   F L__J J   )-____  L
+//   J\__//\\__/L J__L J_______L J_______L J__L LJ J__L J\____,__L J\______/F
+//    \__/  \__/  |__| |_______| |_______| |__L LJ J__|  J____,__F  J______F 
 //
-// SPDX-License-Identifier: MIT
-
+//                                                                                                                                       
+// Wizzmas Holiday Cards Collection
+// https://wizz.wtf
 pragma solidity ^0.8.9;
 
 import "solmate/tokens/ERC721.sol";

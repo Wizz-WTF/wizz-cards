@@ -38,7 +38,7 @@ contract WizzmasScript is Script {
 
         // Cards
         uint8 numTemplateTypes = 3;
-        address[] memory supportedTokens = new address[](6);
+        address[] memory supportedTokens = new address[](3);
         supportedTokens[0] = vm.envAddress("CONTRACT_ADDRESS_WIZARDS");
         supportedTokens[1] = vm.envAddress("CONTRACT_ADDRESS_SOULS");
         supportedTokens[2] = vm.envAddress("CONTRACT_ADDRESS_WARRIORS");
@@ -50,6 +50,10 @@ contract WizzmasScript is Script {
             vm.envString("BASE_URI_CARDS"),
             deployer
         );
+
+        // set mintEnabled
+        artworkMinter.setMintEnabled(true);
+        card.setMintEnabled(true);
 
         // transfer ownership
         artwork.transferOwnership(owner);
